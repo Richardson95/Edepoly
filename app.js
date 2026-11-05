@@ -212,28 +212,89 @@ function filterMenu() {
   document.getElementById("foodGrid").innerHTML = foodCards(foods);
 }
 
+// ===== Login & Register =====
+function authSide(title, text) {
+  return '<div class="auth-side">' +
+    '<h2><i class="fa-solid fa-bowl-food"></i> FPA Foods</h2>' +
+    '<h3>' + title + '</h3>' +
+    '<p>' + text + '</p>' +
+    '<ul>' +
+      '<li><i class="fa-solid fa-circle-check"></i> Browse meals from the cafeteria</li>' +
+      '<li><i class="fa-solid fa-circle-check"></i> Order from your hostel, class or office</li>' +
+      '<li><i class="fa-solid fa-circle-check"></i> Track delivery in real time</li>' +
+      '<li><i class="fa-solid fa-circle-check"></i> Get a receipt for every order</li>' +
+    '</ul></div>';
+}
+
+function field(icon, id, type, placeholder, extra) {
+  return '<div class="field"><i class="fa-solid ' + icon + '"></i>' +
+    '<input id="' + id + '" type="' + type + '" placeholder="' + placeholder + '"' + (extra || '') + '>' +
+    (type === 'password' ? '<i class="fa-solid fa-eye eye" onclick="togglePass(this)"></i>' : '') + '</div>';
+}
+
 function loginPage() {
-  return '<div class="card form-box">' +
-    '<h2>Login</h2>' +
-    '<label>Email</label><input id="lemail" type="email">' +
-    '<label>Password</label><div class="pass-box"><input id="lpass" type="password"><i class="fa-solid fa-eye" onclick="togglePass(this)"></i></div>' +
-    '<button class="btn green" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>' +
-    '<p class="muted" style="margin-top:15px">No account? <a href="#register">Register here</a></p>' +
-    '<p class="muted">Admin demo: admin@fpa.edu.ng / admin123</p>' +
-  '</div>';
+  var remembered = localStorage.getItem("rememberEmail") || "";
+  return '<div class="auth">' +
+    authSide("Welcome back!", "Login to order your favourite meals without queues.") +
+    '<div class="auth-form" onkeydown="if (event.key === \'Enter\') login()">' +
+      '<h2>Login</h2><p class="muted">Enter your details to continue</p>' +
+      '<div id="formMsg" class="form-msg"></div>' +
+      '<label>Email Address</label>' + field("fa-envelope", "lemail", "email", "you@example.com", ' value="' + remembered + '"') +
+      '<label>Password</label>' + field("fa-lock", "lpass", "password", "Your password") +
+      '<div class="auth-row"><label class="check"><input type="checkbox" id="remember"' + (remembered ? ' checked' : '') + '> Remember me</label>' +
+      '<a class="link" onclick="toast(\'Please contact the cafeteria admin to reset your password\')">Forgot password?</a></div>' +
+      '<button class="btn green full" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>' +
+      '<p class="switch">Don\'t have an account? <a href="#register">Create one</a></p>' +
+      '<div class="demo"><i class="fa-solid fa-circle-info"></i> Admin demo: admin@fpa.edu.ng / admin123 ' +
+      '<a class="link" onclick="fillDemo()">Use it</a></div>' +
+    '</div></div>';
 }
 
 function registerPage() {
-  return '<div class="card form-box">' +
-    '<h2>Create Account</h2>' +
-    '<label>Full Name</label><input id="rname">' +
-    '<label>Email</label><input id="remail" type="email">' +
-    '<label>Phone</label><input id="rphone">' +
-    '<label>I am a</label><select id="rtype"><option>Student</option><option>Staff</option></select>' +
-    '<label>Matric No / Staff ID</label><input id="rid">' +
-    '<label>Password</label><div class="pass-box"><input id="rpass" type="password"><i class="fa-solid fa-eye" onclick="togglePass(this)"></i></div>' +
-    '<button class="btn green" onclick="register()"><i class="fa-solid fa-user-plus"></i> Register</button>' +
-  '</div>';
+  return '<div class="auth">' +
+    authSide("Join FPA Foods", "Create a free account for staff and students of Federal Polytechnic Ayede.") +
+    '<div class="auth-form">' +
+      '<h2>Create Account</h2><p class="muted">It only takes a minute</p>' +
+      '<div id="formMsg" class="form-msg"></div>' +
+      '<label>I am a</label>' +
+      '<div class="role-pick">' +
+        '<button type="button" class="' + (regRole === "Student" ? 'active' : '') + '" onclick="pickRole(this, \'Student\')"><i class="fa-solid fa-user-graduate"></i> Student</button>' +
+        '<button type="button" class="' + (regRole === "Staff" ? 'active' : '') + '" onclick="pickRole(this, \'Staff\')"><i class="fa-solid fa-user-tie"></i> Staff</button>' +
+      '</div>' +
+      '<div class="two-col">' +
+        '<div><label>Full Name</label>' + field("fa-user", "rname", "text", "e.g. Kafayat Bulala") + '</div>' +
+        '<div><label id="idLabel">' + (regRole === "Student" ? 'Matric Number' : 'Staff ID') + '</label>' +
+          field("fa-id-card", "rid", "text", regRole === "Student" ? "e.g. 23/CONAS/TCSC/034" : "e.g. FPA/STF/0123") + '</div>' +
+        '<div><label>Email Address</label>' + field("fa-envelope", "remail", "email", "you@example.com") + '</div>' +
+        '<div><label>Phone Number</label>' + field("fa-phone", "rphone", "tel", "080xxxxxxxx") + '</div>' +
+        '<div><label>Password</label>' + field("fa-lock", "rpass", "password", "At least 6 characters") + '</div>' +
+        '<div><label>Confirm Password</label>' + field("fa-lock", "rpass2", "password", "Repeat password") + '</div>' +
+      '</div>' +
+      '<label class="check"><input type="checkbox" id="agree"> I agree to use this platform responsibly</label>' +
+      '<button class="btn green full" onclick="register()"><i class="fa-solid fa-user-plus"></i> Create Account</button>' +
+      '<p class="switch">Already have an account? <a href="#login">Login</a></p>' +
+    '</div></div>';
+}
+
+var regRole = "Student";
+function pickRole(btn, role) {
+  regRole = role;
+  var btns = document.querySelectorAll(".role-pick button");
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+  btn.classList.add("active");
+  document.getElementById("idLabel").textContent = role === "Student" ? "Matric Number" : "Staff ID";
+  document.getElementById("rid").placeholder = role === "Student" ? "e.g. 23/CONAS/TCSC/034" : "e.g. FPA/STF/0123";
+}
+
+function formMsg(text, ok) {
+  var m = document.getElementById("formMsg");
+  m.innerHTML = '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-exclamation') + '"></i> ' + text;
+  m.className = "form-msg show " + (ok ? "ok" : "err");
+}
+
+function fillDemo() {
+  document.getElementById("lemail").value = "admin@fpa.edu.ng";
+  document.getElementById("lpass").value = "admin123";
 }
 
 function cartPage() {
@@ -503,27 +564,36 @@ function adminSettings() {
 function register() {
   var name = document.getElementById("rname").value.trim();
   var email = document.getElementById("remail").value.trim().toLowerCase();
+  var phone = document.getElementById("rphone").value.trim();
+  var idNo = document.getElementById("rid").value.trim();
   var pass = document.getElementById("rpass").value;
-  if (!name || !email || !pass) return toast("Please fill all required fields");
+  var pass2 = document.getElementById("rpass2").value;
+
+  if (!name || !email || !phone || !idNo || !pass) return formMsg("Please fill all the fields");
+  if (!/^\S+@\S+\.\S+$/.test(email)) return formMsg("Please enter a valid email address");
+  if (!/^0\d{10}$/.test(phone)) return formMsg("Phone number must be 11 digits, e.g. 08012345678");
+  if (pass.length < 6) return formMsg("Password must be at least 6 characters");
+  if (pass !== pass2) return formMsg("Passwords do not match");
+  if (!document.getElementById("agree").checked) return formMsg("Please tick the agreement box");
+
   var users = load("users", []);
-  if (users.some(function (u) { return u.email === email; })) return toast("Email already registered");
-  var user = {
-    id: Date.now(), name: name, email: email, password: pass, role: "user",
-    phone: document.getElementById("rphone").value,
-    type: document.getElementById("rtype").value,
-    idNo: document.getElementById("rid").value
-  };
-  users.push(user);
+  if (users.some(function (u) { return u.email === email; })) return formMsg("This email is already registered");
+  users.push({ id: Date.now(), name: name, email: email, password: pass, role: "user", phone: phone, type: regRole, idNo: idNo });
   save("users", users);
-  toast("Registration successful! Please login.");
+  regRole = "Student";
+  localStorage.setItem("rememberEmail", email);
+  toast("Account created! Please login.");
   go("login");
 }
 
 function login() {
   var email = document.getElementById("lemail").value.trim().toLowerCase();
   var pass = document.getElementById("lpass").value;
+  if (!email || !pass) return formMsg("Please enter your email and password");
   var user = load("users", []).find(function (u) { return u.email === email && u.password === pass; });
-  if (!user) return toast("Invalid email or password");
+  if (!user) return formMsg("Incorrect email or password");
+  if (document.getElementById("remember").checked) localStorage.setItem("rememberEmail", email);
+  else localStorage.removeItem("rememberEmail");
   currentUser = user;
   save("currentUser", user);
   toast("Welcome, " + user.name);
