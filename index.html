@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FPA Food Ordering - Federal Polytechnic Ayede</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand"><i class="fa-solid fa-bowl-food"></i> FPA Foods</div>
+    <nav id="nav"></nav>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <h4><i class="fa-solid fa-bowl-food"></i> FPA Foods</h4>
+        <p>Online food ordering and delivery for staff and students of Federal Polytechnic Ayede.</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p><i class="fa-solid fa-location-dot"></i> Federal Polytechnic Ayede, Oyo State</p>
+        <p><i class="fa-solid fa-phone"></i> 0800 000 0000</p>
+        <p><i class="fa-solid fa-envelope"></i> foods@fpa.edu.ng</p>
+      </div>
+      <div>
+        <h4>Opening Hours</h4>
+        <p><i class="fa-regular fa-clock"></i> Mon - Fri: 7:00am - 8:00pm</p>
+        <p><i class="fa-regular fa-clock"></i> Sat: 9:00am - 6:00pm</p>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Food Ordering Website for Staff &amp; Students of Federal Polytechnic Ayede</div>
+  </footer>
+
+  <div id="toast"></div>
+  <button id="toTop" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" title="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+  <div id="modal" onclick="if (event.target === this) closeModal()"></div>
+  <script src="app.js"></script>
+</body>
+</html>
